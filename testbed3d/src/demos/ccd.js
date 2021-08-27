@@ -46,7 +46,7 @@ export function initWorld(RAPIER, testbed) {
     // Create dynamic cube.
     bodyDesc = RAPIER.RigidBodyDesc.newDynamic()
         .setTranslation(-20.0, shiftY + 2.0, 0.0)
-        .setLinvel(1000.0, 0.0, 0.0)
+        .setLinvel(200.0, 0.0, 0.0)
         .setCcdEnabled(true);
     body = world.createRigidBody(bodyDesc);
     colliderDesc = RAPIER.ColliderDesc.ball(1.0)

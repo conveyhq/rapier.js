@@ -1,6 +1,23 @@
 import * as dat from 'dat.gui'
 import * as Stats from "stats.js";
 
+let timerId;
+function throttle(cb, delay) {
+	// If setTimeout is already scheduled, no need to do anything
+	if (timerId) {
+		return;
+	}
+
+	// Schedule a setTimeout after delay seconds
+	timerId  =  setTimeout(function () {
+		cb();
+		
+		// Once setTimeout function execution is finished, timerId = undefined so that in <br>
+		// the next scroll event function execution can be scheduled by the setTimeout
+		timerId  =  undefined;
+	}, delay)
+}
+
 export class Gui {
     constructor(testbed, simulationParameters) {
         // Timings
@@ -35,7 +52,12 @@ export class Gui {
         this.velIter = this.gui.add(simulationParameters, 'numVelocityIter', 0, 20).step(1).listen();
         this.posIter = this.gui.add(simulationParameters, 'numPositionIter', 0, 20).step(1).listen();
         this.gui.add(simulationParameters, 'debugInfos').listen();
-        this.gui.add(simulationParameters, 'running', true).listen();
+        this.gui.add(simulationParameters, 'running', true).listen().onChange(function () {
+            // Make sure steps count is back to 1 if running is enabled
+            if(simulationParameters.running){
+                simulationParameters.steps = 1;
+            }
+        });
         this.gui.add(simulationParameters, 'step')
             .onChange(function () {
                 simulationParameters.stepping = true;
@@ -52,6 +74,25 @@ export class Gui {
             .onChange(function () {
                 testbed.switchToDemo(currDemo.getValue())
             })
+
+        window.reset = ()=>{
+            testbed.switchToDemo(currDemo.getValue())
+        }
+
+        window.step = (timeFrame)=>{
+            throttle(()=>{
+               // reset();
+                simulationParameters.stepping = true;
+                simulationParameters.steps = timeFrame;
+            }, 20);
+        }
+
+        document.addEventListener('pointermove', (event)=>{
+            if(event.shiftKey){
+                const progress = Math.floor(event.clientX/window.innerWidth*340);
+                step(progress);
+            }
+        }, false)
 
 
         /*

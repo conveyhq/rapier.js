@@ -10,8 +10,9 @@ class SimulationParameters {
         this.demo = 'collision groups';
         this.numVelocityIter = 4;
         this.numPositionIter = 1;
-        this.running = true;
-        this.stepping = false;
+        this.running = false;
+        this.stepping = true;
+        this.steps = 1;
         this.step = function () {
         }
         this.restart = function () {
@@ -23,6 +24,7 @@ class SimulationParameters {
         this.backends = backends;
         this.builders = builders;
         this.debugInfos = false;
+
     }
 }
 
@@ -116,6 +118,7 @@ export class Testbed {
     stepMessage(modifications) {
         let res = {
             type: 'step',
+            steps: this.parameters.steps,
             maxVelocityIterations: this.parameters.numVelocityIter,
             maxPositionIterations: this.parameters.numPositionIter,
             modifications: modifications,

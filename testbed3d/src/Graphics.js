@@ -102,7 +102,9 @@ export class Graphics {
 
         this.instanceGroups.push(this.colorPalette.map(color => {
             let ball = new THREE.SphereGeometry(1.0);
-            let mat = new THREE.MeshPhongMaterial({color: color, flatShading: true});
+            // Make spheres red to make them standout
+            // In particular this makes the CCD demo easier to understand.
+            let mat = new THREE.MeshPhongMaterial({color: 0xF30000, flatShading: true});
             return new THREE.InstancedMesh(ball, mat, 1000);
         }));
 

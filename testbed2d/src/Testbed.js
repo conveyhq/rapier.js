@@ -23,6 +23,8 @@ class SimulationParameters {
         this.backends = backends;
         this.builders = builders;
         this.debugInfos = false;
+
+        window.parameters = this;
     }
 }
 

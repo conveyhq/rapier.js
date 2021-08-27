@@ -34,6 +34,7 @@ export class Worker {
 
                 RAPIER.then(R => {
                     this.backend = backend(R);
+                    setTimeout(() => this.backend.takeSnapshot(),1000); 
                     this.backend.restoreSnapshot(event.data.world);
                 });
                 this.stepId = 0;
@@ -68,10 +69,27 @@ export class Worker {
 
     step(params) {
         if (!!this.backend && params.running) {
+
+            if(params.steps !== 1 ){
+                this.backend.restoreSnapshot(this.snapshot);
+                this.stepId = this.snapshotStepId;
+            }
+
             this.backend.applyModifications(params.modifications);
-            let ok = this.backend.step(params.maxVelocityIterations, params.maxPositionIterations);
-            if (ok)
-                this.stepId += 1;
+            
+            const realTime = 1000.0/60.0;
+            const before = performance.now();
+            for(let i = 0; i<params.steps; i++){
+                let ok = this.backend.step(params.maxVelocityIterations, params.maxPositionIterations);
+                if (ok){
+                    this.stepId += 1;
+                }
+            }
+            const deltaTime = performance.now()-before;
+            const averageTime = deltaTime/params.steps;
+            console.log(`Took ${deltaTime.toFixed(2)}ms.`)
+            console.log(`Average ${(averageTime).toFixed(2)}`);
+            console.log(`Realtime x ${(realTime/averageTime).toFixed(2)}`);
         }
 
         if (!!this.backend) {

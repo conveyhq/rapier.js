@@ -51,7 +51,7 @@ export function initWorld(RAPIER, testbed) {
     /*
      * Create the polyhedra
      */
-    let num = 5;
+    let num = 1;
     let scale = 2.0;
     let border_rad = 0.1;
 
