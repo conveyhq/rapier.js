@@ -58,10 +58,14 @@ export class Graphics {
         this.coll2mesh = new Map();
         this.rb2colls = new Map();
         this.colorIndex = 0;
-        this.colorPalette = [0xF3D9B1, 0x98C1D9, 0x053C5E, 0x1F7A8C, 0xFF0000];
+        
+        this.colorPalette = [0xF3D9B1, 0xAAD196, 0x75D1E5, 0x598157, 0xEAE96B];
+        //this.colorPalette = [0xEAE96B, 0x98C1D9, 0x053C5E, 0x1F7A8C, 0xFF0000];
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
         this.renderer = new THREE.WebGLRenderer({antialias: true});
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.VSMShadowMap;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x292929, 1);
         // High pixel Ratio make the rendering extremely slow, so we cap it.
@@ -71,7 +75,51 @@ export class Graphics {
 
         let ambientLight = new THREE.AmbientLight(0x606060);
         this.scene.add(ambientLight);
-        this.light = new THREE.PointLight(0xffffff, 1, 1000);
+        // this.light = new THREE.PointLight(0xffffff, 1, 1000);
+        // this.light.position.set(10, 50, 10);
+        // this.light.castShadow = true;
+        // this.light.shadow.camera.near = 0.1;
+        // this.light.shadow.camera.far = 500;
+        // this.light.shadow.camera.right = 17;
+        // this.light.shadow.camera.left = - 17;
+        // this.light.shadow.camera.top	= 17;
+        // this.light.shadow.camera.bottom = - 17;
+        // const shadowDimensions = 1024;
+        // this.light.shadow.mapSize.width = shadowDimensions;
+        // this.light.shadow.mapSize.height = shadowDimensions;
+        // this.light.shadow.radius = 2;
+        // this.light.shadow.bias = - 0.0000005;
+
+        const dirLight = new THREE.DirectionalLight( 0x8888ff );
+        dirLight.position.set( 3, 12, 17 );
+        dirLight.castShadow = true;
+        dirLight.shadow.camera.near = 0.1;
+        dirLight.shadow.camera.far = 500;
+        dirLight.shadow.camera.right = 17;
+        dirLight.shadow.camera.left = - 17;
+        dirLight.shadow.camera.top	= 17;
+        dirLight.shadow.camera.bottom = - 17;
+        dirLight.shadow.mapSize.width = 512;
+        dirLight.shadow.mapSize.height = 512;
+        dirLight.shadow.radius = 4;
+        dirLight.shadow.bias = - 0.0005;
+        this.light = dirLight;
+
+
+        // const spotLight = new THREE.SpotLight( 0xff8888 );
+        // spotLight.angle = Math.PI / 5;
+        // spotLight.penumbra = 0.3;
+        // spotLight.position.set( 8, 10, 5 );
+        // spotLight.castShadow = true;
+        // spotLight.shadow.camera.near = 8;
+        // spotLight.shadow.camera.far = 200;
+        // spotLight.shadow.mapSize.width = 256;
+        // spotLight.shadow.mapSize.height = 256;
+        // spotLight.shadow.bias = - 0.002;
+        // spotLight.shadow.radius = 4;
+        // //scene.add( spotLight );
+        // this.light = spotLight;
+
         this.scene.add(this.light);
         let me = this;
 
@@ -97,27 +145,40 @@ export class Graphics {
         this.instanceGroups.push(this.colorPalette.map(color => {
             let box = new THREE.BoxGeometry(2.0, 2.0, 2.0);
             let mat = new THREE.MeshPhongMaterial({color: color, flatShading: true});
-            return new THREE.InstancedMesh(box, mat, 1000);
+            const mesh = new THREE.InstancedMesh(box, mat, 1000);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
         }));
 
         this.instanceGroups.push(this.colorPalette.map(color => {
             let ball = new THREE.SphereGeometry(1.0);
             // Make spheres red to make them standout
             // In particular this makes the CCD demo easier to understand.
-            let mat = new THREE.MeshPhongMaterial({color: 0xF30000, flatShading: true});
-            return new THREE.InstancedMesh(ball, mat, 1000);
+            let mat = new THREE.MeshPhongMaterial({color: 0xDA5C6E, flatShading: true});
+            // let mat = new THREE.MeshPhongMaterial({color: 0xF30000, flatShading: true});
+            const mesh = new THREE.InstancedMesh(ball, mat, 1000);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
         }));
 
         this.instanceGroups.push(this.colorPalette.map(color => {
             let cylinder = new THREE.CylinderGeometry(1.0, 1.0);
             let mat = new THREE.MeshPhongMaterial({color: color, flatShading: true});
-            return new THREE.InstancedMesh(cylinder, mat, 100);
+            const mesh = new THREE.InstancedMesh(cylinder, mat, 100);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
         }));
 
         this.instanceGroups.push(this.colorPalette.map(color => {
             let cone = new THREE.ConeGeometry(1.0, 1.0);
             let mat = new THREE.MeshPhongMaterial({color: color, flatShading: true});
-            return new THREE.InstancedMesh(cone, mat, 100);
+            const mesh = new THREE.InstancedMesh(cone, mat, 100);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
         }));
 
         this.instanceGroups.forEach(groups => {
@@ -137,7 +198,7 @@ export class Graphics {
         //     console.log(this.camera.position);
         //     console.log(this.controls.target);
         // }
-        this.light.position.set(this.camera.position.x, this.camera.position.y, this.camera.position.z);
+        
         this.renderer.render(this.scene, this.camera);
     }
 

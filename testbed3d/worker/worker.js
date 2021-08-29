@@ -77,7 +77,8 @@ export class Worker {
 
             this.backend.applyModifications(params.modifications);
             
-            const realTime = 1000.0/60.0;
+            console.log("timestep", params.timestep)
+            const realTime = params.timestep;
             const before = performance.now();
             for(let i = 0; i<params.steps; i++){
                 let ok = this.backend.step(params.maxVelocityIterations, params.maxPositionIterations);
@@ -89,7 +90,7 @@ export class Worker {
             const averageTime = deltaTime/params.steps;
             console.log(`Took ${deltaTime.toFixed(2)}ms.`)
             console.log(`Average ${(averageTime).toFixed(2)}`);
-            console.log(`Realtime x ${(realTime/averageTime).toFixed(2)}`);
+            console.log(`Realtime x ${(params.timestep/averageTime*1000.0).toFixed(2)}`);
         }
 
         if (!!this.backend) {

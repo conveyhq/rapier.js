@@ -7,7 +7,7 @@ class SimulationParameters {
     constructor(backends, builders) {
         this.backend = 'rapier';
         this.prevBackend = 'rapier';
-        this.demo = 'collision groups';
+        this.demo = 'CCD';
         this.numVelocityIter = 4;
         this.numPositionIter = 1;
         this.running = false;
@@ -119,6 +119,7 @@ export class Testbed {
         let res = {
             type: 'step',
             steps: this.parameters.steps,
+            timestep: this.world.timestep,
             maxVelocityIterations: this.parameters.numVelocityIter,
             maxPositionIterations: this.parameters.numPositionIter,
             modifications: modifications,

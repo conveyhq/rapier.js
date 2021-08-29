@@ -24,12 +24,14 @@ function createWall(RAPIER, testbed, world, offset, stackHeight, ) {
 export function initWorld(RAPIER, testbed) {
     let gravity = new RAPIER.Vector3(0.0, -9.81, 0.0);
     let world = new RAPIER.World(gravity);
+    world.timestep = 1.0/90.0;
 
     // Create Ground.
     let groundHeight = 0.1;
     let bodyDesc = RAPIER.RigidBodyDesc.newStatic();
     let body = world.createRigidBody(bodyDesc);
-    let colliderDesc = RAPIER.ColliderDesc.cuboid(30.0, 0.1, 30.0);
+    let groundDimensions = 1000.0;
+    let colliderDesc = RAPIER.ColliderDesc.cuboid(groundDimensions, 0.1, groundDimensions);
     world.createCollider(colliderDesc, body.handle);
 
     let numX = 5;
@@ -45,7 +47,7 @@ export function initWorld(RAPIER, testbed) {
     // A very fast rigid-body with CCD enabled.
     // Create dynamic cube.
     bodyDesc = RAPIER.RigidBodyDesc.newDynamic()
-        .setTranslation(-20.0, shiftY + 2.0, 0.0)
+        .setTranslation(-30.0, shiftY + 2.0, 0.0)
         .setLinvel(200.0, 0.0, 0.0)
         .setCcdEnabled(true);
     body = world.createRigidBody(bodyDesc);

@@ -14,9 +14,9 @@ import * as Platform from './demos/platform'
 
 import('@dimforge/rapier3d').then(RAPIER => {
     let builders = new Map([
+        ['CCD', CCD.initWorld],
         ['collision groups', CollisionGroups.initWorld],
         ['convex polyhedron', ConvexPolyhedron.initWorld],
-        ['CCD', CCD.initWorld],
         ['damping', Damping.initWorld],
         ['fountain', Fountain.initWorld],
         ['heightfield', Heightfield.initWorld],

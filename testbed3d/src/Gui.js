@@ -31,7 +31,7 @@ export class Gui {
         this.stepTimePanel1 = this.stats.addPanel(new Stats.Panel('ms (step)', '#ff8', '#221'));
         this.stepTimePanel2 = this.stats.addPanel(new Stats.Panel('ms (step)', '#ff8', '#221'));
         this.stats.setMode(3);
-        document.body.appendChild(this.stats.dom);
+        //document.body.appendChild(this.stats.dom);
 
         var backends = simulationParameters.backends;
         var demos = Array.from(simulationParameters.builders.keys());
@@ -84,12 +84,16 @@ export class Gui {
                // reset();
                 simulationParameters.stepping = true;
                 simulationParameters.steps = timeFrame;
-            }, 20);
+            }, 16);
         }
 
         document.addEventListener('pointermove', (event)=>{
             if(event.shiftKey){
-                const progress = Math.floor(event.clientX/window.innerWidth*340);
+                const endTime = 450;
+                // const endTime = 960;
+                const progress = Math.floor(
+                    Math.max(2, event.clientX-100)/window.innerWidth*endTime*1
+                );
                 step(progress);
             }
         }, false)
