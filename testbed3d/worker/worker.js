@@ -71,6 +71,10 @@ export class Worker {
         if (!!this.backend && params.running) {
 
             if(params.steps !== 1 ){
+                if(this.stepId===0){
+                    this.snapshot = this.backend.takeSnapshot();
+                    this.snapshotStepId = this.stepId;    
+                }
                 this.backend.restoreSnapshot(this.snapshot);
                 this.stepId = this.snapshotStepId;
             }
