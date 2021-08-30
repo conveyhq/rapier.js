@@ -49,7 +49,14 @@ export class Testbed {
         this.mouse = {x: 0, y: 0};
         this.switchToDemo(builders.keys().next().value);
 
-        // const 
+        this.syncTime(0);
+
+        
+
+        //const currentTimeFrames = document.querySelector("#time span:nth-child(2)")
+
+        //currentTimeMinutes.style.color = "red";
+
 
         this.worker.onmessage = msg => {
             if (!!msg.data && msg.data.token != this.demoToken) {
@@ -66,6 +73,14 @@ export class Testbed {
                         this.graphics.highlightCollider(msg.data.handle);
                         return;
                     case 'colliders.setPositions':
+                        this.syncTime(msg.data.stepId);
+                        if(msg.data.stepId >=parseInt(document.getElementById('slider').max) ){
+                            //parameters.running = false;
+                            this.gui.togglePlayPause(true);
+                        } 
+                        if(document.getElementById('slider').value !== msg.data.stepId){
+                            document.getElementById('slider').value = msg.data.stepId;
+                        }
                         this.graphics.updatePositions(msg.data.positions);
                         break;
                 }
@@ -107,6 +122,33 @@ export class Testbed {
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = 1 - (event.clientY / window.innerHeight) * 2;
         });
+    }
+    
+    syncTime(steps){
+        const currentTimeMinutesSeconds = document.querySelector("#time span:nth-child(1)")
+        //currentTimeMinutesSeconds.style.color = "red";
+        const currentTimeFrames = document.querySelector("#time span:nth-child(2)")
+        //currentTimeFrames.style.color = "green";
+
+        const totalTimeMinutesSeconds = document.querySelector("#time span:nth-child(3)")
+        //totalTimeMinutesSeconds.style.color = "blue";
+        const totalTimeFrames = document.querySelector("#time span:nth-child(4)")
+        //totalTimeFrames.style.color = "pink";
+
+        const slider = document.getElementById('slider');
+
+        function formatTime(steps){
+            const seconds = Math.floor(steps/90.0);
+            const minutes = Math.floor(seconds/60);
+            return `${minutes}:${(seconds%60).toString().padStart(2, '0')}:`;
+        }
+
+        currentTimeMinutesSeconds.innerHTML = formatTime(steps);
+        currentTimeFrames.innerHTML = (steps%90).toString().padStart(2, '0');
+
+        
+        totalTimeMinutesSeconds.innerHTML = formatTime(parseInt(slider.max));
+        totalTimeFrames.innerHTML = (parseInt(slider.max)%90).toString().padStart(2, '0');
     }
 
     raycastMessage() {

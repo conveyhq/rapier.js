@@ -20,6 +20,7 @@ function throttle(cb, delay) {
 
 export class Gui {
     constructor(testbed, simulationParameters) {
+        this.simulationParameters = simulationParameters;
         // Timings
         this.stats = new Stats();
         this.rapierVersion = testbed.RAPIER.version();
@@ -101,34 +102,13 @@ export class Gui {
         const slider = document.getElementById('slider')
         slider.addEventListener("input", function() {
             step(slider.value);
-            console.log(slider.value);
         }, false);
 
-        const playButton = document.getElementById('play');
-        playButton.addEventListener('pointerdown', togglePlayPause);
-        const pauseButton = document.getElementById('pause')
-        pauseButton.style.display = "none";
-        pauseButton.addEventListener('pointerdown', togglePlayPause);
-
-
-
-        function togglePlayPause(){
-            const playing = playButton.style.display === "none";
-            if(playing){
-                playButton.style.display = "inherit";
-                pauseButton.style.display = "none";
-
-                simulationParameters.running = false;
-            } else {
-                playButton.style.display = "none";
-                pauseButton.style.display = "inherit";
-
-                // Make sure steps count is back to 1 if running is enabled
-                simulationParameters.running = true;
-                simulationParameters.steps = 1;
-            }
-        }
-
+        this.playButton = document.getElementById('play');
+        this.playButton.addEventListener('pointerdown', ()=>this.togglePlayPause(false));
+        this.pauseButton = document.getElementById('pause')
+        this.pauseButton.style.display = "none";
+        this.pauseButton.addEventListener('pointerdown', ()=>this.togglePlayPause(true));
 
         /*
          * Block of text for debug infos.
@@ -139,6 +119,26 @@ export class Gui {
         this.debugText.style.top = 50 + 'px';
         this.debugText.style.visibility = 'visible';
         document.body.appendChild(this.debugText);
+    }
+
+    togglePlayPause(pause){
+        const playing = this.playButton.style.display === "none";
+        if(playing && !pause){
+            return;
+        }
+        if(pause){
+            this.playButton.style.display = "inherit";
+            this.pauseButton.style.display = "none";
+
+            this.simulationParameters.running = false;
+        } else {
+            this.playButton.style.display = "none";
+            this.pauseButton.style.display = "inherit";
+
+            // Make sure steps count is back to 1 if running is enabled
+            this.simulationParameters.running = true;
+            this.simulationParameters.steps = 1;
+        }
     }
 
     setDebugInfos(infos) {
