@@ -74,6 +74,7 @@ export class Testbed {
             let now = new Date().getTime();
             let raycastMessage = this.raycastMessage();
             let timestepTimeMS = this.world.timestep * 1000 * 0.75;
+            
             /// Don't step the physics world faster than the real world.
             if (now - this.lastMessageTime >= timestepTimeMS) {
                 if (!!this.preTimestepAction && this.parameters.running) {

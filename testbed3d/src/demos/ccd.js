@@ -40,15 +40,16 @@ export function initWorld(RAPIER, testbed) {
 
     let i;
     for (i = 0; i < numX; ++i) {
-        let x = i * 6.0;
+        let x = i * 12.0;
         createWall(RAPIER, testbed, world, {x: x, y: shiftY, z: 0.0}, numZ);
     }
 
     // A very fast rigid-body with CCD enabled.
     // Create dynamic cube.
+    const intensity = 100.0;
     bodyDesc = RAPIER.RigidBodyDesc.newDynamic()
         .setTranslation(-30.0, shiftY + 2.0, 0.0)
-        .setLinvel(200.0, 0.0, 0.0)
+        .setLinvel(intensity, 0.0, 0.0)
         .setCcdEnabled(true);
     body = world.createRigidBody(bodyDesc);
     colliderDesc = RAPIER.ColliderDesc.ball(1.0)
@@ -58,7 +59,7 @@ export function initWorld(RAPIER, testbed) {
 
     testbed.setWorld(world);
     let cameraPosition = {
-        eye: {x: -31.96000000000001, y: 19.730000000000008, z: -27.86},
+        eye: {x: 31.96000000000001, y: 19.730000000000008, z: -27.86},
         target: {x: -0.0505, y: -0.4126, z: -0.0229}
     };
     testbed.lookAt(cameraPosition)

@@ -21,6 +21,9 @@ export class Worker {
             ["oimo.js", (R, w, b, c, j) => new OimoBackend(R, w, b, c, j)],
             ["physx.release.wasm", (R, w, b, c, j) => new PhysXBackend(R, w, b, c, j)]
         ]);
+
+        this.effects = [];
+        this.snapshots = {};
     }
 
     handleMessage(event) {
@@ -70,31 +73,50 @@ export class Worker {
     step(params) {
         if (!!this.backend && params.running) {
 
+            let startStep = 0;
             if(params.steps !== 1 ){
-                if(this.stepId===0){
-                    this.snapshot = this.backend.takeSnapshot();
-                    this.snapshotStepId = this.stepId;    
+                if(this.stepId===0 && this.snapshots[0] === undefined ){
+                    this.snapshots[0] = this.backend.takeSnapshot();
                 }
-                this.backend.restoreSnapshot(this.snapshot);
-                this.stepId = this.snapshotStepId;
+
+                // Find oldest but younger snapshot to the target frame (steps)
+                const oldestYoungestIndex = Object.keys(this.snapshots).map(s => parseInt(s)).reverse().find(s=>s<=params.steps);
+
+                this.backend.restoreSnapshot(this.snapshots[oldestYoungestIndex]);
+                this.stepId = oldestYoungestIndex;
+                startStep = oldestYoungestIndex+1;
             }
 
             this.backend.applyModifications(params.modifications);
             
-            console.log("timestep", params.timestep)
-            const realTime = params.timestep;
-            const before = performance.now();
-            for(let i = 0; i<params.steps; i++){
-                let ok = this.backend.step(params.maxVelocityIterations, params.maxPositionIterations);
-                if (ok){
-                    this.stepId += 1;
+            if(startStep >=params.steps){
+                // Do nothing
+                console.log(`Took ${"N/A"}ms. (frame=${params.steps})`)
+                console.log(`Average ${"N/A"} (frame=${params.steps})`);
+                console.log(`Realtime x ${"N/A"} (frame=${params.steps})`);
+            } else {
+                console.log("timestep", params.timestep)
+                const realTime = params.timestep;
+                const before = performance.now();
+                for(let i = startStep; i<params.steps; i++){
+                    
+                    // Snapshot every 20 frames if there isn't one already
+                    if( i%20 === 0 && this.snapshots[i] === undefined){
+                        console.log(`snapshot ${i}`)
+                        this.snapshots[i] = this.backend.takeSnapshot();
+                    }
+
+                    let ok = this.backend.step(params.maxVelocityIterations, params.maxPositionIterations);
+                    if (ok){
+                        this.stepId += 1;
+                    }
                 }
+                const deltaTime = performance.now()-before;
+                const averageTime = deltaTime/(params.steps-startStep);
+                console.log(`Took ${deltaTime.toFixed(2)}ms.`)
+                console.log(`Average ${(averageTime).toFixed(2)}`);
+                console.log(`Realtime x ${(params.timestep/averageTime*1000.0).toFixed(2)}`);
             }
-            const deltaTime = performance.now()-before;
-            const averageTime = deltaTime/params.steps;
-            console.log(`Took ${deltaTime.toFixed(2)}ms.`)
-            console.log(`Average ${(averageTime).toFixed(2)}`);
-            console.log(`Realtime x ${(params.timestep/averageTime*1000.0).toFixed(2)}`);
         }
 
         if (!!this.backend) {

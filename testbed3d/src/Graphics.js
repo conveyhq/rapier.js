@@ -75,50 +75,23 @@ export class Graphics {
 
         let ambientLight = new THREE.AmbientLight(0x606060);
         this.scene.add(ambientLight);
-        // this.light = new THREE.PointLight(0xffffff, 1, 1000);
-        // this.light.position.set(10, 50, 10);
-        // this.light.castShadow = true;
-        // this.light.shadow.camera.near = 0.1;
-        // this.light.shadow.camera.far = 500;
-        // this.light.shadow.camera.right = 17;
-        // this.light.shadow.camera.left = - 17;
-        // this.light.shadow.camera.top	= 17;
-        // this.light.shadow.camera.bottom = - 17;
-        // const shadowDimensions = 1024;
-        // this.light.shadow.mapSize.width = shadowDimensions;
-        // this.light.shadow.mapSize.height = shadowDimensions;
-        // this.light.shadow.radius = 2;
-        // this.light.shadow.bias = - 0.0000005;
 
         const dirLight = new THREE.DirectionalLight( 0x8888ff );
         dirLight.position.set( 3, 12, 17 );
         dirLight.castShadow = true;
         dirLight.shadow.camera.near = 0.1;
         dirLight.shadow.camera.far = 500;
-        dirLight.shadow.camera.right = 17;
-        dirLight.shadow.camera.left = - 17;
-        dirLight.shadow.camera.top	= 17;
-        dirLight.shadow.camera.bottom = - 17;
-        dirLight.shadow.mapSize.width = 512;
-        dirLight.shadow.mapSize.height = 512;
+        const shadowCameraDims = 100;
+        const shadowTextureDims = 512;
+        dirLight.shadow.camera.right = shadowCameraDims;
+        dirLight.shadow.camera.left = -shadowCameraDims;
+        dirLight.shadow.camera.top	= shadowCameraDims;
+        dirLight.shadow.camera.bottom = -shadowCameraDims;
+        dirLight.shadow.mapSize.width = shadowTextureDims;
+        dirLight.shadow.mapSize.height = shadowTextureDims;
         dirLight.shadow.radius = 4;
         dirLight.shadow.bias = - 0.0005;
         this.light = dirLight;
-
-
-        // const spotLight = new THREE.SpotLight( 0xff8888 );
-        // spotLight.angle = Math.PI / 5;
-        // spotLight.penumbra = 0.3;
-        // spotLight.position.set( 8, 10, 5 );
-        // spotLight.castShadow = true;
-        // spotLight.shadow.camera.near = 8;
-        // spotLight.shadow.camera.far = 200;
-        // spotLight.shadow.mapSize.width = 256;
-        // spotLight.shadow.mapSize.height = 256;
-        // spotLight.shadow.bias = - 0.002;
-        // spotLight.shadow.radius = 4;
-        // //scene.add( spotLight );
-        // this.light = spotLight;
 
         this.scene.add(this.light);
         let me = this;
