@@ -98,6 +98,37 @@ export class Gui {
             }
         }, false)
 
+        const slider = document.getElementById('slider')
+        slider.addEventListener("input", function() {
+            step(slider.value);
+            console.log(slider.value);
+        }, false);
+
+        const playButton = document.getElementById('play');
+        playButton.addEventListener('pointerdown', togglePlayPause);
+        const pauseButton = document.getElementById('pause')
+        pauseButton.style.display = "none";
+        pauseButton.addEventListener('pointerdown', togglePlayPause);
+
+
+
+        function togglePlayPause(){
+            const playing = playButton.style.display === "none";
+            if(playing){
+                playButton.style.display = "inherit";
+                pauseButton.style.display = "none";
+
+                simulationParameters.running = false;
+            } else {
+                playButton.style.display = "none";
+                pauseButton.style.display = "inherit";
+
+                // Make sure steps count is back to 1 if running is enabled
+                simulationParameters.running = true;
+                simulationParameters.steps = 1;
+            }
+        }
+
 
         /*
          * Block of text for debug infos.
@@ -119,7 +150,7 @@ export class Gui {
             text += "<br/>World hash time (CRC32): " + infos.worldHashTime + "ms";
             text += "<br/>Snapshot time: " + infos.snapshotTime + "ms";
         }
-        this.debugText.innerHTML = text;
+        //this.debugText.innerHTML = text;
     }
 
     setTiming(timing) {

@@ -49,6 +49,8 @@ export class Testbed {
         this.mouse = {x: 0, y: 0};
         this.switchToDemo(builders.keys().next().value);
 
+        // const 
+
         this.worker.onmessage = msg => {
             if (!!msg.data && msg.data.token != this.demoToken) {
                 // This messages comes from an older demo update loop
