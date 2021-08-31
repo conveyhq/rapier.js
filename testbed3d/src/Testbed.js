@@ -74,9 +74,10 @@ export class Testbed {
                         return;
                     case 'colliders.setPositions':
                         this.syncTime(msg.data.stepId);
-                        if(msg.data.stepId >=parseInt(document.getElementById('slider').max) ){
-                            //parameters.running = false;
-                            this.gui.togglePlayPause(true);
+                        if(msg.data.stepId >= parseInt(document.getElementById('slider').max) && parameters.running){
+                            parameters.running = false;
+                            console.log('end-reached')
+                            this.gui.togglePlayPause(false);
                         } 
                         if(document.getElementById('slider').value !== msg.data.stepId){
                             document.getElementById('slider').value = msg.data.stepId;
@@ -165,6 +166,7 @@ export class Testbed {
             type: 'step',
             steps: this.parameters.steps,
             timestep: this.world.timestep,
+            endTime: parseInt(document.getElementById('slider').max),
             maxVelocityIterations: this.parameters.numVelocityIter,
             maxPositionIterations: this.parameters.numPositionIter,
             modifications: modifications,

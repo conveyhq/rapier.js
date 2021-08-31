@@ -71,7 +71,7 @@ export class Worker {
     }
 
     step(params) {
-        if (!!this.backend && params.running) {
+        if (!!this.backend && params.running ) {
 
             let startStep = 0;
             if(params.steps !== 1 ){
@@ -85,6 +85,9 @@ export class Worker {
                 this.backend.restoreSnapshot(this.snapshots[oldestYoungestIndex]);
                 this.stepId = oldestYoungestIndex;
                 startStep = oldestYoungestIndex+1;
+            } else if(params.steps===1 && this.stepId >= params.endTime){
+                return;
+                
             }
 
             this.backend.applyModifications(params.modifications);
