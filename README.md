@@ -4,6 +4,8 @@ This fork is part of my time travel experiments for Convey. (Note to self: See t
  - Ensure it supports snapshotting/serializing 
  - Build at least one demo proving/disproving it meets our requirements.
 
+Current working demo: https://conveyhq.github.io/rapier.js/cannonball/
+
 Build/run testbed2 or testbed3 to see all the demos. 
 ```
 git clone git@github.com:seflless/rapier.js.git
@@ -13,6 +15,3 @@ npm install
 npm start
 # The demos should auto launch in your default browser.
 ```
-
-I'll list which ones I modified here as I go.
- - 
